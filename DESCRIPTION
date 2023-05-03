@@ -1,0 +1,17 @@
+Package: hammer
+Title: Monte-Carlo Cross-Validation with Weights
+Version: 0.0.0.9000
+Authors@R: 
+    person("Michael", "Mahoney", , "mike.mahoney.218@gmail.com", 
+           role = c("aut", "cre"), comment = c(ORCID = "0000-0003-2402-304X"))
+Description: An experimental variant of Monte-Carlo cross-validation which uses 
+    case weights to determine the probability of a given observation being 
+    selected for the analysis set. The key function in the package is a minor
+    extension of the 'mc_cv()` function from 'rsample'.
+License: MIT + file LICENSE
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3

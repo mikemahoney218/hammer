@@ -1,0 +1,33 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# hammer
+
+<!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/hammer)](https://CRAN.R-project.org/package=hammer)
+<!-- badges: end -->
+
+The goal of hammer is to provide an experimental variant of the `mc_cv()` 
+function from [rsample](https://rsample.tidymodels.org/) which takes into 
+consideration case weights when sampling observations for the analysis set.
+
+## Installation
+
+You can install the development version of hammer like so:
+
+``` r
+pak::pkg_install(mikemahoney218/hammer)
+```
