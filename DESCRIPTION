@@ -10,10 +10,18 @@ Description: An experimental variant of Monte-Carlo cross-validation which uses
     extension of the 'mc_cv()` function from 'rsample'.
 License: MIT + file LICENSE
 Suggests: 
+    modeldata,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-URL: https://github.com/mikemahoney218/hammer
+URL: https://github.com/mikemahoney218/hammer,
+    https://mikemahoney218.github.io/hammer/
 BugReports: https://github.com/mikemahoney218/hammer/issues
+Imports: 
+    purrr,
+    rlang,
+    rsample,
+    tibble,
+    tidyselect
