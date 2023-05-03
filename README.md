@@ -1,0 +1,85 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+# hammer
+
+<!-- badges: start -->
+
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/hammer)](https://CRAN.R-project.org/package=hammer)
+[![R-CMD-check](https://github.com/mikemahoney218/hammer/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/mikemahoney218/hammer/actions/workflows/R-CMD-check.yaml)
+<!-- badges: end -->
+
+The goal of hammer is to provide an experimental variant of the
+`mc_cv()` function from [rsample](https://rsample.tidymodels.org/) which
+takes into consideration case weights when sampling observations for the
+analysis set.
+
+## Installation
+
+You can install the development version of hammer like so:
+
+``` r
+pak::pkg_install(mikemahoney218/hammer)
+```
+
+## Example
+
+The only function in the package is `h_mc_cv()`, a minor fork of the
+`mc_cv()` function from rsample. This function works more or less the
+same way as `mc_cv()`, and with default arguments returns identical
+objects (outside of an additional class added to objects from
+`h_mc_cv()`):
+
+``` r
+library(hammer)
+
+hammer_output <- withr::with_seed(1107, h_mc_cv(Orange))
+rsample_output <- withr::with_seed(1107, rsample::mc_cv(Orange))
+
+class(hammer_output) <- class(rsample_output)
+
+all.equal(hammer_output, rsample_output)
+#> [1] TRUE
+```
+
+The only difference is a new argument, `weights`, which lets you specify
+a column in `data` that contains the probability of any given
+observation being selected for an analysis set. For instance, if we give
+the 10th observation a weight of 1 and every other observation a weight
+of 0, we can make it so that each of our analysis sets only contain the
+10th observation:
+
+``` r
+example_data <- tibble::tibble(x = 1:10, w = c(rep(0, 9), 1))
+
+weighted_hammer <- h_mc_cv(example_data, weights = w, prop = 0.1)
+
+vapply(weighted_hammer$splits, function(x) rsample::analysis(x)$x, numeric(1))
+#>  [1] 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10 10
+```
+
+This also works with stratification; for instance, we can pull the same
+trick by assigning the 9th and 10th observations positive weights and
+different strata, ensuring that our analysis sets will always contain
+only the 9th and 10th observations:
+
+``` r
+example_data <- tibble::tibble(
+  x = 1:10, 
+  w = c(rep(0, 8), 1, 1), 
+  s = rep(1:2, 5)
+)
+
+weighted_hammer <- h_mc_cv(example_data, weights = w, strata = s, prop = 0.2)
+
+vapply(weighted_hammer$splits, function(x) rsample::analysis(x)$x, numeric(2))
+#>      [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13] [,14]
+#> [1,]    9    9    9    9    9    9    9    9    9     9     9     9     9     9
+#> [2,]   10   10   10   10   10   10   10   10   10    10    10    10    10    10
+#>      [,15] [,16] [,17] [,18] [,19] [,20] [,21] [,22] [,23] [,24] [,25]
+#> [1,]     9     9     9     9     9     9     9     9     9     9     9
+#> [2,]    10    10    10    10    10    10    10    10    10    10    10
+```
