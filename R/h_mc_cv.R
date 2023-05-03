@@ -74,16 +74,14 @@ h_mc_cv <- function(data, prop = 3 / 4, times = 25,
   }
 
   if (!missing(weights)) {
-    weights_att <- tidyselect::vars_select(names(data), !! rlang::enquo(weights))
-    if (length(weights_att) == 0) {
-      weights_att <- NULL
-      weights_vec <- NULL
-    } else {
-      weights_vec <- getElement(data, weights_att)
-    }
-  } else {
-    weights_att <- NULL
+    weights <- tidyselect::vars_select(names(data), !! rlang::enquo(weights))
+  }
+
+  if (is.null(weights) || length(weights) == 0) {
+    weights <- NULL
     weights_vec <- NULL
+  } else {
+    weights_vec <- getElement(data, weights)
   }
 
   strata_check(strata, data)
@@ -105,14 +103,14 @@ h_mc_cv <- function(data, prop = 3 / 4, times = 25,
   split_objs$splits <- purrr::map(split_objs$splits, rm_out)
 
   if (!is.null(strata)) names(strata) <- NULL
-  if (!is.null(weights_att)) names(weights_att) <- NULL
+  if (!is.null(weights)) names(weights) <- NULL
   mc_att <- list(
     prop = prop,
     times = times,
     strata = strata,
     breaks = breaks,
     pool = pool,
-    weights = weights_att
+    weights = weights
   )
 
   rsample::new_rset(
